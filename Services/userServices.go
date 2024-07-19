@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt"
+	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
 
@@ -42,6 +43,7 @@ type Claims struct {
 
 var config Config
 var db *gorm.DB
+var logger *zap.Logger
 
 // functions allow to load external database connection
 func SetDB(targetDB *gorm.DB) {
@@ -75,8 +77,9 @@ func LoadConfig() error {
 }
 
 // Database initializer
-func InitServices() error {
+func InitServices(targetLogger *zap.Logger) error {
 	err := LoadConfig()
+	logger = targetLogger
 	if err != nil {
 		return err
 	}
@@ -96,6 +99,7 @@ func GetUserByUsername(username string) (*User, error) {
 	var user User
 	err := db.Where("username = ?", username).First(&user).Error
 	if err != nil {
+		logger.Error("GetUserByUsername Err: " + err.Error())
 		return nil, err
 	}
 	user.Password = ""
@@ -106,6 +110,7 @@ func GetUserByID(userID uint) (*User, error) {
 	var user User
 	err := db.Where("username = ?", userID).First(&user).Error
 	if err != nil {
+		logger.Error("GetUserByID Err: " + err.Error())
 		return nil, err
 	}
 	user.Password = ""
@@ -116,6 +121,7 @@ func getPasswordByUsername(username string) (string, error) {
 	var user User
 	err := db.Where("username = ?", username).First(&user).Error
 	if err != nil {
+		logger.Error("GetPasswordByUsername Err: " + err.Error())
 		return "", err
 	}
 	user.Password = ""
@@ -140,6 +146,7 @@ func GenerateJWT(username string, password string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodES256, claims)
 	signedToken, err := token.SignedString(convertedSecret)
 	if err != nil {
+		logger.Error("GenerateJWT Err: " + err.Error())
 		return "", err
 	}
 	return signedToken, nil
@@ -156,12 +163,15 @@ func ValidateJWT(token string) (*Claims, error) {
 
 	if err != nil {
 		if err == jwt.ErrSignatureInvalid {
+			logger.Error("ValidateJWT Err: Invalid token")
 			return nil, fmt.Errorf("invalid token")
 		}
+		logger.Error("ValidateJWT Err: Parse token error")
 		return nil, fmt.Errorf("unable to parse token")
 	}
 
 	if !parsedToken.Valid {
+		logger.Error("ValidateJWT Err: Invalid token")
 		return nil, fmt.Errorf("invalid token")
 	}
 	return claims, nil
@@ -170,6 +180,7 @@ func ValidateJWT(token string) (*Claims, error) {
 func LoginWithUsername(username string, password string) (bool, string, error) {
 	realPass, err := getPasswordByUsername(username)
 	if err != nil {
+		logger.Error("LoginWithUsername Err: " + err.Error())
 		return false, "", err
 	}
 	if realPass == password {
@@ -187,10 +198,12 @@ func LoginWithUsername(username string, password string) (bool, string, error) {
 func LoginWithToken(token string) (bool, error) {
 	tokenClaims, err := ValidateJWT(token)
 	if err != nil {
+		logger.Error("LoginWithToken Err: " + err.Error())
 		return false, err
 	}
 	actualPassword, err := getPasswordByUsername(tokenClaims.Username)
 	if err != nil {
+		logger.Error("LoginWithToken Err: " + err.Error())
 		return false, err
 	}
 	if actualPassword == tokenClaims.Password {
@@ -212,6 +225,7 @@ func ListUsers() ([]User, error) {
 	var users []User
 	err := db.Find(&users).Error
 	if err != nil {
+		logger.Error("ListUsers Err: " + err.Error())
 		return nil, err
 	}
 	for i := 0; i < len(users); i++ {
