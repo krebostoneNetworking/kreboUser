@@ -40,6 +40,10 @@ github.com/klauspost/cpuid/v2 v2.0.9/go.mod h1:FInQzS24/EEf25PyTYn52gqo7WaD8xa02
 github.com/klauspost/cpuid/v2 v2.2.8 h1:+StwCXwm9PdpiEkPyzBXIy+M9KUb4ODm0Zarf1kS5BM=
 github.com/klauspost/cpuid/v2 v2.2.8/go.mod h1:Lcz8mBdAVJIBVzewtcLocK12l3Y+JytZYpaMropDUws=
 github.com/knz/go-libedit v1.10.1/go.mod h1:MZTVkCWyz0oBc7JOWP3wNAzd002ZbM/5hgShxwh4x8M=
+github.com/krebostoneNetworking/kReturnTypes v0.0.0-20240721212927-3d737e0fc384 h1:gjRwjzw9qQC5Kwm1pamNcw6qg8XiXfyMSRK5OnZlsvc=
+github.com/krebostoneNetworking/kReturnTypes v0.0.0-20240721212927-3d737e0fc384/go.mod h1:6ZNx5lYNFlWnegfTduec3/e5D4qjFI8b/878/0xO3Pk=
+github.com/krebostoneNetworking/kReturnTypes v0.0.0-20240722000412-d7bfadd796c5 h1:kRKebZT3C7wnE1aAYQYxjUHdPcn+JdFvyaMpzf9pem4=
+github.com/krebostoneNetworking/kReturnTypes v0.0.0-20240722000412-d7bfadd796c5/go.mod h1:isRHCpi9oXGtwmzDvtyY+euHS6DzptVbd2UeBh4JM0s=
 github.com/leodido/go-urn v1.4.0 h1:WT9HwE9SGECu3lg4d/dIA+jxlljEa1/ffXKmRjqdmIQ=
 github.com/leodido/go-urn v1.4.0/go.mod h1:bvxc+MVxLKB4z00jd1z+Dvzr47oO32F/QSNjSBOlFxI=
 github.com/mattn/go-isatty v0.0.20 h1:xfD0iDuEKnDkl03q4limB+vH+GxLEtL/jb4xVJSWWEY=

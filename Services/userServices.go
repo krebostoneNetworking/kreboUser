@@ -195,21 +195,25 @@ func LoginWithUsername(username string, password string) (bool, string, error) {
 	}
 }
 
-func LoginWithToken(token string) (bool, error) {
+func LoginWithToken(token string) (bool, string, error) {
 	tokenClaims, err := ValidateJWT(token)
 	if err != nil {
 		logger.Error("LoginWithToken Err: " + err.Error())
-		return false, err
+		return false, "", err
 	}
 	actualPassword, err := getPasswordByUsername(tokenClaims.Username)
 	if err != nil {
 		logger.Error("LoginWithToken Err: " + err.Error())
-		return false, err
+		return false, "", err
 	}
 	if actualPassword == tokenClaims.Password {
-		return true, nil
+		newTok, genErr := GenerateJWT(tokenClaims.Username, tokenClaims.Password)
+		if genErr != nil {
+			return true, "", genErr
+		}
+		return true, newTok, nil
 	} else {
-		return false, nil
+		return false, "", nil
 	}
 }
 
